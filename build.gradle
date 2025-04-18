@@ -1,5 +1,6 @@
 plugins {
     id 'fabric-loom' version '1.10-SNAPSHOT'
+    id "me.modmuss50.mod-publish-plugin" version "0.8.2"
 }
 
 base {
@@ -27,6 +28,43 @@ dependencies {
     modImplementation include("org.ladysnake.cardinal-components-api:cardinal-components-base:${project.cca_version}")
     modImplementation include("org.ladysnake.cardinal-components-api:cardinal-components-scoreboard:${project.cca_version}")
     modImplementation include("xyz.nucleoid:server-translations-api:${project.sta_version}")
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    additionalFiles.files.add(remapSourcesJar.archiveFile.get().getAsFile())
+    displayName = "${project.version.toString().split("\\+")[0]} for $minecraft_version"
+    changelog = ""
+    type = STABLE
+    modLoaders.addAll("fabric", "quilt", "neoforge")
+    dryRun = !providers.gradleProperty("curseforge_api_key").isPresent() || !providers.gradleProperty("modrinth_api_key").isPresent()
+    curseforge {
+        accessToken = providers.gradleProperty('curseforge_api_key')
+        projectId = curseforge_id
+        minecraftVersionRange {
+            start = minecraft_version
+            end = minecraft_version
+        }
+        announcementTitle = "Download from CurseForge"
+        javaVersions.addAll(JavaVersion.VERSION_21, JavaVersion.VERSION_22)
+        clientRequired = false
+        serverRequired = true
+        projectSlug = curseforge_slug
+        requires("fabric-api")
+        embeds("cardinal-components-api")
+    }
+    modrinth {
+        accessToken = providers.gradleProperty("modrinth_api_key")
+        projectId = modrinth_id
+        minecraftVersionRange {
+            start = minecraft_version
+            end = minecraft_version
+            includeSnapshots = true
+        }
+        announcementTitle = "Download from Modrinth"
+        requires("fabric-api")
+        embeds("cardinal-components-api")
+    }
 }
 
 fabricApi {
