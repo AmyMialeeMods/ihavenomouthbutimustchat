@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="*"
+license="ARR"
+
+[properties]
+"connector:placeholder"=true
+
+[[mods]]
+modId="ihnmbimc"
+version="${version}"
+displayName="IHaveNoMouthButIMustChat"
+authors="AmyMialee"
+description='''Better control over Chat'''
+
+[[dependencies.ihnmbimc]]
+modId="minecraft"
+mandatory=true
+versionRange="*"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.ihnmbimc]]
+modId="connector"
+mandatory=true
+versionRange="*"
+ordering="NONE"
+side="BOTH"

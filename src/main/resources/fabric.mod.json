@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "ihnmbimc",
+  "version": "${version}",
+
+  "name": "IHaveNoMouthButIMustChat",
+  "description": "Better control over Chat",
+  "authors": [
+    "AmyMialee"
+  ],
+  "contact": {
+    "email": "ihavenomouthbutimustchat@amymialee.xyz",
+    "homepage": "https://amymialee.xyz",
+    "irc": "",
+    "sources": "https://github.com/AmyMialeeMods/ihavenomouthbutimustchat",
+    "issues": "https://github.com/AmyMialeeMods/ihavenomouthbutimustchat/issues"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/ihnmbimc/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "xyz.amymialee.ihnmbimc.IHaveNoMouthButIMustChatDataGen"
+    ],
+    "main": [
+      "xyz.amymialee.ihnmbimc.IHaveNoMouthButIMustChat"
+    ],
+    "cardinal-components-scoreboard": [
+      "xyz.amymialee.ihnmbimc.IHaveNoMouthButIMustChat"
+    ]
+  },
+  "mixins": [
+    "ihnmbimc.mixins.json"
+  ],
+
+  "depends": {
+    "fabric": "*"
+  },
+
+  "custom": {
+    "cardinal-components": [
+      "ihnmbimc:chatmanager"
+    ],
+    "modmenu": {
+      "links": {
+        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/ihavenomouthbutimustchat",
+        "modmenu.discord": "https://discord.amymialee.xyz",
+        "modmenu.kofi": "https://ko-fi.com/amymialee",
+        "modmenu.modrinth": "https://modrinth.com/project/ihavenomouthbutimustchat",
+        "modmenu.twitter": "https://x.com/amy_mialee",
+        "modmenu.wiki": "https://modrinth.com/project/ihavenomouthbutimustchat"
+      },
+      "update_checker": true
+    }
+  }
+}

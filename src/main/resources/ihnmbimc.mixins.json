@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "xyz.amymialee.ihnmbimc.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MessageArgumentTypeMixin",
+    "ServerPlayNetworkHandlerMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
