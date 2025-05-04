@@ -14,6 +14,7 @@ import xyz.amymialee.ihnmbimc.IHaveNoMouthButIMustChat;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class ChatManagerComponent implements Component {
     public static final ComponentKey<ChatManagerComponent> KEY = ComponentRegistry.getOrCreate(IHaveNoMouthButIMustChat.id("chatmanager"), ChatManagerComponent.class);
@@ -112,11 +113,12 @@ public class ChatManagerComponent implements Component {
     @Override
     public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         this.timeouts.clear();
-        var timeoutsTag = tag.getCompound("timeouts");
+        var timeoutsTag = tag.getCompoundOrEmpty("timeouts");
         for (var key : timeoutsTag.getKeys()) {
-            var profileTag = timeoutsTag.getCompound(key);
-            var profile = new GameProfile(profileTag.getUuid("uuid"), profileTag.getString("name"));
-            var timeout = profileTag.getLong("timeout");
+            var profileTag = timeoutsTag.getCompoundOrEmpty(key);
+            if (!profileTag.isEmpty()) continue;
+            var profile = new GameProfile(UUID.fromString(""), profileTag.getString("name", ""));
+            var timeout = profileTag.getLong("timeout", 0);
             this.timeouts.put(profile, timeout);
         }
     }

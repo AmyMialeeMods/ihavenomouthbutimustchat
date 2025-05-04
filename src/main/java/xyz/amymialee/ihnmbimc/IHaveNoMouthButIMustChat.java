@@ -90,7 +90,7 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
             consumer.accept(localize(player, "chat.%s.chat.banned").formatted(Formatting.RED));
         } else if (chatManager.isTimedOut(gameProfile)) {
             ci.cancel();
-            consumer.accept(localize(player, "chat.%s.chat.timeout".formatted(chatManager.getTimeoutString(gameProfile))).formatted(Formatting.RED));
+            consumer.accept(localize(player, "chat.%s.chat.timeout", chatManager.getTimeoutString(gameProfile)).formatted(Formatting.RED));
         } else if (CHAT_WHITELIST.get() && !chatManager.isWhitelisted(gameProfile)) {
             ci.cancel();
             consumer.accept(localize(player, "chat.%s.chat.whitelisted").formatted(Formatting.RED));
