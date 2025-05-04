@@ -1,13 +1,25 @@
 package xyz.amymialee.ihnmbimc;
 
+import com.google.gson.JsonObject;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.data.DataOutput;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.DataWriter;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import xyz.amymialee.mialib.templates.MDataGen;
 
+import java.nio.file.Path;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+
 public class IHaveNoMouthButIMustChatDataGen extends MDataGen {
-    @Override
-    protected void generateTranslations(MLanguageProvider provider, RegistryWrapper.WrapperLookup registryLookup, FabricLanguageProvider.@NotNull TranslationBuilder builder) {
+    public static Consumer<FabricLanguageProvider.TranslationBuilder> translations = (builder) -> {
         // MValues
         builder.add(IHaveNoMouthButIMustChat.IHNMBIMC_CATEGORY.getTranslationKey(), "Have No Mouth But Must Chat");
         builder.add(IHaveNoMouthButIMustChat.CHAT_DISABLED.getTranslationKey(), "Chat Disabled");
@@ -50,5 +62,59 @@ public class IHaveNoMouthButIMustChatDataGen extends MDataGen {
         builder.add("commands.%s.timeout.pardon.success".formatted(IHaveNoMouthButIMustChat.MOD_ID), "%s is no longer timed out");
         builder.add("commands.%s.timeout.none".formatted(IHaveNoMouthButIMustChat.MOD_ID), "No players are timed out");
         builder.add("commands.%s.timeout.list".formatted(IHaveNoMouthButIMustChat.MOD_ID), "There are %s timed out players: %s");
+    };
+
+    @Override
+    protected void generateTranslations(MLanguageProvider provider, RegistryWrapper.WrapperLookup registryLookup, FabricLanguageProvider.@NotNull TranslationBuilder builder) {
+        translations.accept(builder);
+    }
+
+    @Override
+    protected void addExtraDataProviders(FabricDataGenerator.@NotNull Pack pack) {
+        pack.addProvider((dataOutput, future) -> new FabricServerLanguageProvider(dataOutput, "en_us") {
+            @Override
+            public void generateTranslations(FabricLanguageProvider.TranslationBuilder translationBuilder) {
+                translations.accept(translationBuilder);
+            }
+        });
+    }
+
+    public abstract static class FabricServerLanguageProvider implements DataProvider {
+        protected final FabricDataOutput dataOutput;
+        private final String languageCode;
+
+        protected FabricServerLanguageProvider(FabricDataOutput dataOutput, String languageCode) {
+            this.dataOutput = dataOutput;
+            this.languageCode = languageCode;
+        }
+
+        public abstract void generateTranslations(FabricLanguageProvider.TranslationBuilder translationBuilder);
+
+        @Override
+        public CompletableFuture<?> run(DataWriter writer) {
+            var translationEntries = new TreeMap<String, String>();
+            this.generateTranslations((String key, String value) -> {
+                Objects.requireNonNull(key);
+                Objects.requireNonNull(value);
+                if (translationEntries.containsKey(key)) {
+                    throw new RuntimeException("Existing translation key found - " + key + " - Duplicate will be ignored.");
+                }
+                translationEntries.put(key, value);
+            });
+            var langEntryJson = new JsonObject();
+            for (var entry : translationEntries.entrySet()) {
+                langEntryJson.addProperty(entry.getKey(), entry.getValue());
+            }
+            return DataProvider.writeToPath(writer, langEntryJson, this.getLangFilePath(this.languageCode));
+        }
+
+        private Path getLangFilePath(String code) {
+            return this.dataOutput.getResolver(DataOutput.OutputType.DATA_PACK, "lang").resolveJson(Identifier.of(this.dataOutput.getModId(), code));
+        }
+
+        @Override
+        public String getName() {
+            return "Server Language (%s)".formatted(this.languageCode);
+        }
     }
 }

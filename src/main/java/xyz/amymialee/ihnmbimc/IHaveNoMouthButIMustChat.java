@@ -4,9 +4,9 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.GameProfileArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -22,6 +22,7 @@ import xyz.amymialee.ihnmbimc.util.ChatManagerCommand;
 import xyz.amymialee.mialib.mvalues.MValue;
 import xyz.amymialee.mialib.mvalues.MValueCategory;
 import xyz.nucleoid.server.translations.api.Localization;
+import xyz.nucleoid.server.translations.api.LocalizationTarget;
 import xyz.nucleoid.server.translations.impl.ServerTranslations;
 
 import java.util.function.Consumer;
@@ -75,10 +76,10 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
         registry.registerScoreboardComponent(ChatManagerComponent.KEY, (scoreboard, server) -> new ChatManagerComponent());
     }
 
-    public static void cancelChat(PlayerEntity player, Consumer<Text> consumer, CallbackInfo ci) {
+    public static void cancelChat(ServerPlayerEntity player, Consumer<Text> consumer, CallbackInfo ci) {
         if (CHAT_DISABLED.get()) {
             ci.cancel();
-            consumer.accept(localize("chat.%s.chat.disabled").formatted(Formatting.RED));
+            consumer.accept(localize(player, "chat.%s.chat.disabled").formatted(Formatting.RED));
             return;
         }
         if (player == null) return;
@@ -86,18 +87,23 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
         var chatManager = ChatManagerComponent.KEY.get(player.getScoreboard());
         if (chatManager.isBanned(gameProfile)) {
             ci.cancel();
-            consumer.accept(localize("chat.%s.chat.banned").formatted(Formatting.RED));
+            consumer.accept(localize(player, "chat.%s.chat.banned").formatted(Formatting.RED));
         } else if (chatManager.isTimedOut(gameProfile)) {
             ci.cancel();
-            consumer.accept(localize("chat.%s.chat.timeout".formatted(chatManager.getTimeoutString(gameProfile))).formatted(Formatting.RED));
+            consumer.accept(localize(player, "chat.%s.chat.timeout".formatted(chatManager.getTimeoutString(gameProfile))).formatted(Formatting.RED));
         } else if (CHAT_WHITELIST.get() && !chatManager.isWhitelisted(gameProfile)) {
             ci.cancel();
-            consumer.accept(localize("chat.%s.chat.whitelisted").formatted(Formatting.RED));
+            consumer.accept(localize(player, "chat.%s.chat.whitelisted").formatted(Formatting.RED));
         }
     }
 
-    public static @NotNull MutableText localize(@NotNull String key, Object... args) {
-        return Localization.text(Text.translatable(key.formatted(MOD_ID), args), ServerTranslations.INSTANCE.systemTarget).copy();
+    public static @NotNull MutableText localize(ServerPlayerEntity player, @NotNull String key, Object... args) {
+        if (player == null) return localize(ServerTranslations.INSTANCE.systemTarget, key, args);
+        return Localization.text(Text.translatable(key.formatted(MOD_ID), args), player).copy();
+    }
+
+    public static @NotNull MutableText localize(LocalizationTarget target, @NotNull String key, Object... args) {
+        return Localization.text(Text.translatable(key.formatted(MOD_ID), args), target).copy();
     }
 
     public static @NotNull Identifier id(String path) {
