@@ -31,9 +31,9 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
     public static final String MOD_ID = "ihnmbimc";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final MValueCategory IHNMBIMC_CATEGORY = new MValueCategory(id("ihnmbimc"), Items.NAME_TAG.getDefaultStack(), Identifier.ofVanilla("textures/block/stone_bricks.png"));
-    public static final MValue<Boolean> CHAT_DISABLED = new MValue.MValueBoolean(IHNMBIMC_CATEGORY, id("chat_disabled"), (a) -> Items.BARRIER.getDefaultStack(), false);
-    public static final MValue<Boolean> CHAT_WHITELIST = new MValue.MValueBoolean(IHNMBIMC_CATEGORY, id("chat_whitelist"), (a) -> Items.PAPER.getDefaultStack(), false);
+    public static final MValueCategory IHNMBIMC_CATEGORY = new MValueCategory(id("ihnmbimc"), Items.NAME_TAG, Identifier.ofVanilla("textures/block/stone_bricks.png"), 16, 16);
+    public static final MValue<Boolean> CHAT_DISABLED = MValue.of(id("chat_disabled"), MValue.BOOLEAN_FALSE).category(IHNMBIMC_CATEGORY).item(Items.BARRIER).build();
+    public static final MValue<Boolean> CHAT_WHITELIST = MValue.of(id("chat_whitelist"), MValue.BOOLEAN_FALSE).category(IHNMBIMC_CATEGORY).item(Items.PAPER).build();
 
     @Override
     public void onInitialize() {
