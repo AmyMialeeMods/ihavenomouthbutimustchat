@@ -117,7 +117,7 @@ public class ChatManagerComponent implements Component {
         for (var key : timeoutsTag.getKeys()) {
             var profileTag = timeoutsTag.getCompoundOrEmpty(key);
             if (!profileTag.isEmpty()) continue;
-            var profile = new GameProfile(UUID.fromString(""), profileTag.getString("name", ""));
+            var profile = new GameProfile(UUID.fromString(profileTag.getString("uuid", "")), profileTag.getString("name", ""));
             var timeout = profileTag.getLong("timeout", 0);
             this.timeouts.put(profile, timeout);
         }
@@ -129,6 +129,7 @@ public class ChatManagerComponent implements Component {
         for (var entry : this.timeouts.entrySet()) {
             var profileTag = new NbtCompound();
             profileTag.putString("name", entry.getKey().getName());
+            profileTag.putString("uuid", entry.getKey().getId().toString());
             profileTag.putLong("timeout", entry.getValue());
             timeoutsTag.put(entry.getKey().getId().toString(), profileTag);
         }
