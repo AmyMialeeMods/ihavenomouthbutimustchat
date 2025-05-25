@@ -1,15 +1,15 @@
 package xyz.amymialee.ihnmbimc.cca;
 
 import com.mojang.authlib.GameProfile;
+import dev.onyxstudios.cca.api.v3.component.Component;
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
 import org.jetbrains.annotations.NotNull;
-import org.ladysnake.cca.api.v3.component.Component;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import xyz.amymialee.ihnmbimc.IHaveNoMouthButIMustChat;
 
 import java.io.File;
@@ -111,20 +111,20 @@ public class ChatManagerComponent implements Component {
     }
 
     @Override
-    public void readFromNbt(@NotNull NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void readFromNbt(@NotNull NbtCompound tag) {
         this.timeouts.clear();
-        var timeoutsTag = tag.getCompoundOrEmpty("timeouts");
+        var timeoutsTag = tag.getCompound("timeouts");
         for (var key : timeoutsTag.getKeys()) {
-            var profileTag = timeoutsTag.getCompoundOrEmpty(key);
+            var profileTag = timeoutsTag.getCompound(key);
             if (!profileTag.isEmpty()) continue;
-            var profile = new GameProfile(UUID.fromString(profileTag.getString("uuid", "")), profileTag.getString("name", ""));
-            var timeout = profileTag.getLong("timeout", 0);
+            var profile = new GameProfile(UUID.fromString(profileTag.getString("uuid")), profileTag.getString("name"));
+            var timeout = profileTag.getLong("timeout");
             this.timeouts.put(profile, timeout);
         }
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public void writeToNbt(NbtCompound tag) {
         var timeoutsTag = new NbtCompound();
         for (var entry : this.timeouts.entrySet()) {
             var profileTag = new NbtCompound();

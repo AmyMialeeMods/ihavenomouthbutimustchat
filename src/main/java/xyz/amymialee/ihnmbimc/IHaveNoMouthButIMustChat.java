@@ -1,6 +1,8 @@
 package xyz.amymialee.ihnmbimc;
 
 import com.mojang.brigadier.arguments.LongArgumentType;
+import dev.onyxstudios.cca.api.v3.scoreboard.ScoreboardComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.scoreboard.ScoreboardComponentInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.GameProfileArgumentType;
@@ -12,8 +14,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.ladysnake.cca.api.v3.scoreboard.ScoreboardComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.scoreboard.ScoreboardComponentInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,9 +31,9 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
     public static final String MOD_ID = "ihnmbimc";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final MValueCategory IHNMBIMC_CATEGORY = new MValueCategory(id("ihnmbimc"), Items.NAME_TAG, Identifier.ofVanilla("textures/block/stone_bricks.png"), 16, 16);
-    public static final MValue<Boolean> CHAT_DISABLED = MValue.of(id("chat_disabled"), MValue.BOOLEAN_FALSE).category(IHNMBIMC_CATEGORY).item(Items.BARRIER).build();
-    public static final MValue<Boolean> CHAT_WHITELIST = MValue.of(id("chat_whitelist"), MValue.BOOLEAN_FALSE).category(IHNMBIMC_CATEGORY).item(Items.PAPER).build();
+    public static final MValueCategory IHNMBIMC_CATEGORY = new MValueCategory(id("ihnmbimc"), Items.NAME_TAG.getDefaultStack(), new Identifier("textures/block/stone_bricks.png"));
+    public static final MValue<Boolean> CHAT_DISABLED = MValue.ofBoolean(IHNMBIMC_CATEGORY, id("chat_disabled"),Items.BARRIER.getDefaultStack(), false);
+    public static final MValue<Boolean> CHAT_WHITELIST = MValue.ofBoolean(IHNMBIMC_CATEGORY, id("chat_whitelist"), Items.PAPER.getDefaultStack(), false);
 
     @Override
     public void onInitialize() {
@@ -72,12 +72,12 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
     }
 
     @Override
-    public void registerScoreboardComponentFactories(@NotNull ScoreboardComponentFactoryRegistry registry) {
+    public void registerScoreboardComponentFactories(ScoreboardComponentFactoryRegistry registry) {
         registry.registerScoreboardComponent(ChatManagerComponent.KEY, (scoreboard, server) -> new ChatManagerComponent());
     }
 
     public static void cancelChat(ServerPlayerEntity player, Consumer<Text> consumer, CallbackInfo ci) {
-        if (CHAT_DISABLED.get()) {
+        if (CHAT_DISABLED.getValue()) {
             ci.cancel();
             consumer.accept(localize(player, "chat.%s.chat.disabled").formatted(Formatting.RED));
             return;
@@ -91,7 +91,7 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
         } else if (chatManager.isTimedOut(gameProfile)) {
             ci.cancel();
             consumer.accept(localize(player, "chat.%s.chat.timeout", chatManager.getTimeoutString(gameProfile)).formatted(Formatting.RED));
-        } else if (CHAT_WHITELIST.get() && !chatManager.isWhitelisted(gameProfile)) {
+        } else if (CHAT_WHITELIST.getValue() && !chatManager.isWhitelisted(gameProfile)) {
             ci.cancel();
             consumer.accept(localize(player, "chat.%s.chat.whitelisted").formatted(Formatting.RED));
         }
@@ -107,6 +107,6 @@ public class IHaveNoMouthButIMustChat implements ModInitializer, ScoreboardCompo
     }
 
     public static @NotNull Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
+        return new Identifier(MOD_ID, path);
     }
 }

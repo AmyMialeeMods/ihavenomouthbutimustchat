@@ -19,15 +19,15 @@ import java.util.function.Function;
 
 public class ChatManagerCommand {
     public static int executeWhitelistOn(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        if (IHaveNoMouthButIMustChat.CHAT_WHITELIST.get()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.whitelist.alreadyOn")).create();
-        IHaveNoMouthButIMustChat.CHAT_WHITELIST.type.set(IHaveNoMouthButIMustChat.CHAT_WHITELIST, true);
+        if (IHaveNoMouthButIMustChat.CHAT_WHITELIST.getValue()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.whitelist.alreadyOn")).create();
+        IHaveNoMouthButIMustChat.CHAT_WHITELIST.setValue(true);
         context.getSource().sendFeedback(() -> IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.whitelist.enabled"), true);
         return 1;
     }
 
     public static int executeWhitelistOff(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        if (!IHaveNoMouthButIMustChat.CHAT_WHITELIST.get()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.whitelist.alreadyOff")).create();
-        IHaveNoMouthButIMustChat.CHAT_WHITELIST.type.set(IHaveNoMouthButIMustChat.CHAT_WHITELIST, false);
+        if (!IHaveNoMouthButIMustChat.CHAT_WHITELIST.getValue()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.whitelist.alreadyOff")).create();
+        IHaveNoMouthButIMustChat.CHAT_WHITELIST.setValue(false);
         context.getSource().sendFeedback(() -> IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.whitelist.disabled"), true);
         return 1;
     }
@@ -133,15 +133,15 @@ public class ChatManagerCommand {
     }
 
     public static int executeChatOn(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        if (!IHaveNoMouthButIMustChat.CHAT_DISABLED.get()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.chat.alreadyEnabled")).create();
-        IHaveNoMouthButIMustChat.CHAT_DISABLED.type.set(IHaveNoMouthButIMustChat.CHAT_DISABLED, false);
+        if (!IHaveNoMouthButIMustChat.CHAT_DISABLED.getValue()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.chat.alreadyEnabled")).create();
+        IHaveNoMouthButIMustChat.CHAT_DISABLED.setValue(false);
         context.getSource().sendFeedback(() -> IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.chat.enabled"), true);
         return 1;
     }
 
     public static int executeChatOff(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        if (IHaveNoMouthButIMustChat.CHAT_DISABLED.get()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.chat.alreadyDisabled")).create();
-        IHaveNoMouthButIMustChat.CHAT_DISABLED.type.set(IHaveNoMouthButIMustChat.CHAT_DISABLED, true);
+        if (IHaveNoMouthButIMustChat.CHAT_DISABLED.getValue()) throw new SimpleCommandExceptionType(IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.chat.alreadyDisabled")).create();
+        IHaveNoMouthButIMustChat.CHAT_DISABLED.setValue(true);
         context.getSource().sendFeedback(() -> IHaveNoMouthButIMustChat.localize(context.getSource().getPlayer(), "commands.%s.chat.disabled"), true);
         return 1;
     }

@@ -25,8 +25,8 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     modImplementation include("xyz.amymialee:mialib:${project.mialib_version}")
-    modImplementation include("org.ladysnake.cardinal-components-api:cardinal-components-base:${project.cca_version}")
-    modImplementation include("org.ladysnake.cardinal-components-api:cardinal-components-scoreboard:${project.cca_version}")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-scoreboard:${project.cca_version}")
     modImplementation include("xyz.nucleoid:server-translations-api:${project.sta_version}")
 }
 
@@ -36,7 +36,7 @@ publishMods {
     displayName = "${project.version.toString().split("\\+")[0]} for $minecraft_version"
     changelog = ""
     type = STABLE
-    modLoaders.addAll("fabric", "quilt", "neoforge")
+    modLoaders.addAll("fabric", "quilt")
     dryRun = !providers.gradleProperty("curseforge_api_key").isPresent() || !providers.gradleProperty("modrinth_api_key").isPresent()
     curseforge {
         accessToken = providers.gradleProperty('curseforge_api_key')
@@ -88,13 +88,13 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    it.options.release.set(21)
+    it.options.release.set(17)
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
     withSourcesJar()
 }
 

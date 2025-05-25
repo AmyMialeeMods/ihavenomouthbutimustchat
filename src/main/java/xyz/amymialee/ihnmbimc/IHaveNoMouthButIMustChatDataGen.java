@@ -65,7 +65,7 @@ public class IHaveNoMouthButIMustChatDataGen extends MDataGen {
     };
 
     @Override
-    protected void generateTranslations(MLanguageProvider provider, RegistryWrapper.WrapperLookup registryLookup, FabricLanguageProvider.@NotNull TranslationBuilder builder) {
+    protected void generateTranslations(MLanguageProvider provider, FabricLanguageProvider.@NotNull TranslationBuilder builder) {
         translations.accept(builder);
     }
 
